@@ -11,11 +11,19 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 
 // MongoDB Connection
-const MONGO_URI = 'mongodb+srv://digloo:navnit@cluster0.frthf3b.mongodb.net/worklify_hrms?retryWrites=true&w=majority&appName=Cluster0';
+// MongoDB Connection
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+    console.error("Error: MONGO_URI environment variable is not defined.");
+}
 
 mongoose.connect(MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error('MongoDB Connection Error:', err));
+
+
+
 
 // --- Schemas ---
 
@@ -206,6 +214,10 @@ app.post('/api/office', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+    });
+}
+
+export default app;
