@@ -8,7 +8,5 @@
   to = "/.netlify/functions/api/:splat"
   status = 200
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Removed SPA Fallback /* -> /index.html because this is a Multi-Page App.
+# Netlify will serve the actual HTML files (e.g., /admin/dashboard.html) automatically.
