@@ -72,6 +72,35 @@
                 <p>Employee: EMP001 / emp@worklify.com</p>
             </div>
         </form>
+
+        <!-- Sign Up Form (Hidden by default) -->
+        <form id="signup-form" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="signup-name" class="form-input" placeholder="e.g. John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="signup-email" class="form-input" placeholder="e.g. john@worklify.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="signup-password" class="form-input" placeholder="Create a password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full"
+                style="margin-top: 16px; height: 48px; font-size: 1rem;">
+                Create Account
+            </button>
+        </form>
+
+        <div style="margin-top: 16px; text-align: center;">
+            <a href="#" id="toggle-form"
+                style="color: var(--accent-blue); text-decoration: none; font-size: 0.9rem;">Don't have an account?
+                Create one</a>
+        </div>
     </div>
 
     <script type="module" src="/main.js"></script>
@@ -80,6 +109,77 @@
         import { data, initData } from '/shared/data.js';
 
         const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const toggleLink = document.getElementById('toggle-form');
+
+        // Toggle Logic
+        toggleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                toggleLink.textContent = "Don't have an account? Create one";
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                toggleLink.textContent = "Already have an account? Sign In";
+            }
+        });
+
+        // Sign Up Logic
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = signupForm.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = "Creating...";
+            btn.disabled = true;
+
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            // Random ID Generation
+            const employeeId = 'EMP' + Math.floor(1000 + Math.random() * 9000);
+
+            try {
+                // Register User via API
+                const res = await fetch('/api/employees', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: Date.now(),
+                        employeeId,
+                        name,
+                        email,
+                        password,
+                        role: 'employee',
+                        status: 'Active',
+                        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
+                        attendanceSummary: { presentDays: 0, absentDays: 0, leaveDays: 0 }
+                    })
+                });
+
+                if (!res.ok) throw new Error('Registration failed');
+
+                alert(`Account created successfully! Your ID is: ${employeeId}`);
+
+                // Switch to Login but don't auto-fill to ensure they remember it
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                toggleLink.textContent = "Don't have an account? Create one";
+
+                // Pre-fill login for convenience
+                document.getElementById('identity').value = email;
+                document.getElementById('password').value = password;
+
+            } catch (err) {
+                console.error(err);
+                alert('Error creating account. Please try again.');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
