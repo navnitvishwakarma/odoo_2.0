@@ -14,13 +14,27 @@ app.use(bodyParser.json({ limit: '50mb' }));
 // MongoDB Connection
 const MONGO_URI = process.env.MONGO_URI;
 
-if (!MONGO_URI) {
-    console.error("Error: MONGO_URI environment variable is not defined.");
+if (process.env.NODE_ENV !== 'production') {
+    if (!MONGO_URI) {
+        console.error("Error: MONGO_URI environment variable is not defined.");
+    }
+    mongoose.connect(MONGO_URI)
+        .then(() => console.log('MongoDB Connected (Local)'))
+        .catch(err => console.error('MongoDB Connection Error:', err));
+} else {
+    // In production (Serverless), connect inside the request handler or ensure it's reused.
+    // Mongoose handles connection buffering, so calling connect here is fine, 
+    // but better to await it if inside a handler. 
+    // For simplicity, we keep it global but use a cached promise pattern if needed.
+    // For now, let's keep it simple:
+    mongoose.connect(MONGO_URI)
+        .then(() => console.log('MongoDB Connected (Vercel)'))
+        .catch(err => console.error('MongoDB Connection Error:', err));
 }
 
-mongoose.connect(MONGO_URI)
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.error('MongoDB Connection Error:', err));
+app.get('/api', (req, res) => {
+    res.send('Worklify API is running');
+});
 
 
 
