@@ -68,8 +68,14 @@ if (process.env.NODE_ENV !== 'production') {
     mongoose.connection.once('open', () => console.log('MongoDB Connected (Local via Middleware)'));
 }
 
-app.get('/api', (req, res) => {
+const apiRouter = express.Router();
+
+// Health Check
+apiRouter.get('/', (req, res) => {
     res.send('Worklify API is running');
+});
+apiRouter.get('/health', (req, res) => {
+    res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
 
@@ -152,7 +158,7 @@ const Office = mongoose.model('Office', OfficeSchema);
 // --- Routes ---
 
 // Init Route
-app.get('/api/init', async (req, res) => {
+apiRouter.get('/init', async (req, res) => {
     try {
         const [employees, attendance, timeoff, payroll, office] = await Promise.all([
             Employee.find({}),
@@ -176,7 +182,7 @@ app.get('/api/init', async (req, res) => {
 });
 
 // Employees
-app.post('/api/employees', async (req, res) => {
+apiRouter.post('/employees', async (req, res) => {
     try {
         const emp = new Employee(req.body);
         await emp.save();
@@ -186,7 +192,7 @@ app.post('/api/employees', async (req, res) => {
     }
 });
 
-app.put('/api/employees/:id', async (req, res) => {
+apiRouter.put('/employees/:id', async (req, res) => {
     try {
         await Employee.updateOne({ id: req.params.id }, req.body);
         res.json({ success: true });
@@ -196,7 +202,7 @@ app.put('/api/employees/:id', async (req, res) => {
 });
 
 // Change Password
-app.put('/api/change-password', async (req, res) => {
+apiRouter.put('/change-password', async (req, res) => {
     try {
         const { employeeId, oldPassword, newPassword } = req.body;
         const emp = await Employee.findOne({ employeeId });
@@ -211,7 +217,7 @@ app.put('/api/change-password', async (req, res) => {
 });
 
 // Attendance
-app.post('/api/attendance', async (req, res) => {
+apiRouter.post('/attendance', async (req, res) => {
     try {
         const att = new Attendance(req.body);
         await att.save();
@@ -222,7 +228,7 @@ app.post('/api/attendance', async (req, res) => {
 });
 
 // TimeOff
-app.post('/api/timeoff', async (req, res) => {
+apiRouter.post('/timeoff', async (req, res) => {
     try {
         const t = new TimeOff(req.body);
         await t.save();
@@ -232,7 +238,7 @@ app.post('/api/timeoff', async (req, res) => {
     }
 });
 
-app.put('/api/timeoff/:id', async (req, res) => {
+apiRouter.put('/timeoff/:id', async (req, res) => {
     try {
         await TimeOff.updateOne({ id: req.params.id }, req.body);
         res.json({ success: true });
@@ -242,7 +248,7 @@ app.put('/api/timeoff/:id', async (req, res) => {
 });
 
 // Payroll
-app.post('/api/payroll', async (req, res) => {
+apiRouter.post('/payroll', async (req, res) => {
     try {
         const p = new Payroll(req.body);
         await p.save();
@@ -253,7 +259,7 @@ app.post('/api/payroll', async (req, res) => {
 });
 
 // Office
-app.post('/api/office', async (req, res) => {
+apiRouter.post('/office', async (req, res) => {
     try {
         await Office.deleteMany({});
         const o = new Office(req.body);
@@ -263,6 +269,11 @@ app.post('/api/office', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// Mount Router
+app.use('/api', apiRouter);
+// Fallback: If Vercel rewrites strip the prefix, handle it at root too.
+app.use('/', apiRouter);
 
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
