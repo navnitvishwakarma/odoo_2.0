@@ -11,7 +11,7 @@ export let data = {
 // --- Sync Function ---
 export async function initData() {
     try {
-        const res = await fetch(`${API_URL}/init`);
+        const res = await fetch(`${API_URL}/init`, { cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to fetch data');
         const json = await res.json();
         data.employees = json.employees || [];

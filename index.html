@@ -135,7 +135,7 @@
             btn.disabled = true;
 
             const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
+            const email = document.getElementById('signup-email').value.toLowerCase();
             const password = document.getElementById('signup-password').value;
 
             // Random ID Generation
@@ -183,8 +183,10 @@
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const identity = document.getElementById('identity').value.trim();
-            const password = document.getElementById('password').value; // Password ignored for prototype
+            const rawIdentity = document.getElementById('identity').value.trim();
+            // If it looks like an email, lowercase it. IDs might be case sensitive (e.g. ADM001).
+            const identity = rawIdentity.includes('@') ? rawIdentity.toLowerCase() : rawIdentity;
+            const password = document.getElementById('password').value;
 
             const btn = loginForm.querySelector('button');
             const originalText = btn.textContent;
