@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <title>My Dashboard - Worklify</title>
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="../style.css" />
     <!-- Load Global Scripts (Chart.js via main.js) -->
-    <script src="/main.js" defer></script>
+    <script src="../main.js" defer></script>
 </head>
 
 <body>
@@ -126,10 +126,10 @@
     </div>
 
     <script type="module">
-        import { renderHeader } from '/shared/header.js';
-        import { renderSidebar } from '/shared/sidebar.js';
-        import { data, updateEmployeeStatus, addAttendance, commit, getOfficeLocation, getDistanceFromLatLonInMeters, initData } from '/shared/data.js';
-        import { getStatusColor, formatDate, calculateDailyProductivity, calculateTaskBasedProductivity } from '/shared/utils.js';
+        import { renderHeader } from '../shared/header.js';
+        import { renderSidebar } from '../shared/sidebar.js';
+        import { data, updateEmployeeStatus, addAttendance, commit, getOfficeLocation, getDistanceFromLatLonInMeters, initData } from '../shared/data.js';
+        import { getStatusColor, formatDate, calculateDailyProductivity, calculateTaskBasedProductivity } from '../shared/utils.js';
 
         await initData();
 
