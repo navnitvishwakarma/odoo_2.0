@@ -270,6 +270,40 @@ apiRouter.post('/office', async (req, res) => {
     }
 });
 
+// Seed Route (Temporary for deployment)
+apiRouter.get('/seed', async (req, res) => {
+    try {
+        await Employee.deleteMany({});
+        await Attendance.deleteMany({});
+        await TimeOff.deleteMany({});
+        await Payroll.deleteMany({});
+        await Office.deleteMany({});
+
+        // Mock Data
+        const employees = [
+            { id: 1, employeeId: 'ADM001', name: 'Admin User', email: 'admin@worklify.com', role: 'admin', status: 'Active', password: 'password', avatar: 'https://i.pravatar.cc/150?img=11' },
+            { id: 2, employeeId: 'EMP001', name: 'John Doe', email: 'emp@worklify.com', role: 'employee', status: 'Active', password: 'password', avatar: 'https://i.pravatar.cc/150?img=12' },
+            { id: 3, employeeId: 'EMP002', name: 'Jane Smith', email: 'jane@worklify.com', role: 'employee', status: 'On Leave', password: 'password', avatar: 'https://i.pravatar.cc/150?img=5' },
+            { id: 4, employeeId: 'EMP003', name: 'Robert Johnson', email: 'robert@worklify.com', role: 'employee', status: 'Active', password: 'password', avatar: 'https://i.pravatar.cc/150?img=3' }
+        ];
+
+        const attendance = [
+            { id: 1, employeeId: 'EMP001', date: '2023-10-25', checkIn: '09:00 AM', checkOut: '05:00 PM', status: 'Present', location: { lat: 0, lng: 0 } },
+            { id: 2, employeeId: 'EMP002', date: '2023-10-25', checkIn: '09:15 AM', checkOut: '05:15 PM', status: 'Present', location: { lat: 0, lng: 0 } }
+        ];
+
+        const office = new Office({ lat: 28.6139, lng: 77.2090, setAt: new Date().toISOString() });
+
+        await Employee.insertMany(employees);
+        await Attendance.insertMany(attendance);
+        await office.save();
+
+        res.json({ message: 'Database Seeded Successfully', employees, attendance, office });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Mount Router
 app.use('/api', apiRouter);
 // Fallback: If Vercel rewrites strip the prefix, handle it at root too.
