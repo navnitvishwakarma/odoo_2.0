@@ -5,9 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - Worklify</title>
-    <link rel="stylesheet" href="../style.css" />
-    <!-- Load Global Scripts (Chart.js via main.js) -->
-    <script type="module" src="../main.js"></script>
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/main.js"></script>
 </head>
 
 <body>
@@ -106,10 +105,10 @@
     </div>
 
     <script type="module">
-        import { renderHeader } from '../shared/header.js';
-        import { renderSidebar } from '../shared/sidebar.js';
-        import { initData, data, setOfficeLocation, getOfficeLocation } from '../shared/data.js';
-        import { formatDate, calculateProductivity } from '../shared/utils.js';
+        import { renderHeader } from '/shared/header.js';
+        import { renderSidebar } from '/shared/sidebar.js';
+        import { initData, data, setOfficeLocation, getOfficeLocation } from '/shared/data.js';
+        import { formatDate, calculateProductivity } from '/shared/utils.js';
 
         let attendanceChart = null;
         let productivityChart = null;
