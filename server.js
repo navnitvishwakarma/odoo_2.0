@@ -274,6 +274,8 @@ apiRouter.post('/office', async (req, res) => {
 app.use('/api', apiRouter);
 // Fallback: If Vercel rewrites strip the prefix, handle it at root too.
 app.use('/', apiRouter);
+// Netlify specific mount (in case path is passed through)
+app.use('/.netlify/functions/api', apiRouter);
 
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
